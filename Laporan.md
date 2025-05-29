@@ -37,7 +37,7 @@ Sistem seperti ini tela terbukti efektif meningkatkan kepuasan pengguna, memperc
   Dalam mencapai tujuan yang akan dibuat, berikut beberapa solusi yang dapat digunakan sehingga tujuan dan masalah yang dihadapi dapat dicapai dengan baik.
   * Membangun sistem rekomendai berbasis *Content-Based Filtering*
     : Merekomendasi destinasi wisata berdasarkan kemiripan atribut pengguna, cocok untuk pengguna baru yang belum memiliki riwayat rating.
-  * Membangun sistem rekomendasi berbasis *Collaborative Filtering*
+  * Membangun sistem rekomendasi untuk
     : Merekomendasikan destinasi berdasarkan preferensi pengguna lain yang memiliki kesamaan minat, efektif untuk pengguna yang sudah memiliki riwayat rating.
 
 ## Data Understanding
@@ -121,15 +121,11 @@ Dataset terdiri dari 4 files :
 ### Content-Based Filtering
 * Membuat matriks similarity dengan menggunakan cosine_similarity yang menunjukkan seberapa mirip tiap objek wisata satu dengan lainnya berdasarkan fitur numerik yang sudah dipilih.
 * membuat fungsi 'get_content_recommendations' untuk memeriksa keberadaan kolom Place_Name dan mengurutkan similarity score dan mengambil top-N rekomendasi.
-### Collaborative-Based Filtering
-* Mmebuat metode 'get_user_based_recommendations' untuk  memberikan rekomendasi wisata berdasarkan kemiripan antar pengguna.Program menghitung user similarity matrix menggunakan cosine similarity dari matriks user-item. Lalu, fungsi get_user_based_recommendations dibuat untuk memberikan rekomendasi bagi pengguna tertentu. Fungsi ini akan mencari pengguna yang mirip.
-* Membuat metode 'get_item_based_recommendations' untuk memberikan rekomendasi tempat wisata berdasarkan kemiripan antar tempat. Proses dimulai dengan menghitung item similarity matrix menggunakan cosine similarity antar kolom (tempat) dalam matriks user-item. Fungsi get_item_based_recommendations kemudian digunakan untuk memprediksi rating tempat yang belum dikunjungi oleh pengguna berdasarkan rating pengguna terhadap tempat lain yang mirip.
 
-| Aspek           | Content-Based Filtering | Collaborative Filtering |
-|----------------|--------------------------|-------------------------|
-| **Keunggulan**  | - Tidak butuh banyak data pengguna  <br> - Bisa rekomendasi item baru | - Personalisasi lebih baik  <br> - Bisa menemukan item tak serupa |
-| **Kelemahan**   | - Tidak bisa memahami selera pengguna secara kolektif              | - Butuh banyak data pengguna  <br> - Tidak bisa rekomendasi item baru |
-| **Cold-start**  | Tidak bisa handle user baru dengan preferensi tidak diketahui      | Tidak bisa handle item baru tanpa rating|
+| Aspek           | Content-Based Filtering |
+|----------------|--------------------------|
+| **Keunggulan**  | - Tidak butuh banyak data pengguna  <br> - Bisa rekomendasi item baru |
+| **Kelemahan**   | - Tidak bisa memahami selera pengguna secara kolektif              |
 
 
 ## Evaluation
@@ -139,11 +135,4 @@ Dataset terdiri dari 4 files :
   
 ![image](https://github.com/user-attachments/assets/fcb08054-3569-45a1-8671-98e9f6ec0ca7)
 
-
-### Collaborative-Based Filtering
-* Menggunakan metrik RMSE (Root Mean Squared Error) untuk Mengukur seberapa besar perbedaan antara rating aktual dengan rating prediksi secara kuadrat, kemudian diakarkan.
-* Menggunakan metrik MAE (Mean Absolute Error) untuk Mengukur rata-rata kesalahan absolut antara nilai aktual dan prediksi.
-* Sesuai dari hasil evalusi, didapat bahwa user 1 memberikan 29 rating pada 29 tempat wisata, rata-rata rating yang diberikan adalah 3.4 sehingga model akan merekomendasikan tempat dengan rating dengan rentang 2-5, sehingga wisatawan dapat menemukan tempat wisata sesuai dengan selera nya baik mellaui kesamaan user maupun Item dengan orang lain.
-  
-![image](https://github.com/user-attachments/assets/1f1fd8e2-4e07-4b0e-b782-5c665711a046)
 
