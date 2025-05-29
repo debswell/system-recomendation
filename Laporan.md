@@ -27,17 +27,17 @@ Sistem seperti ini tela terbukti efektif meningkatkan kepuasan pengguna, memperc
 * Kesulitan Personalisasi : Wisatawan mengalami kesulitan menemukan destinasi wosata yang sesuai dengan preferensi pribadi mereka.
 * Inefficinet Discovery : Proses pencarian destinasi wisata yang cocok memakan waktu lama dan sering menghasilkan pilihan yang tidak sesuai ekspektasi.
 * Cold Start Probelem : Pengguna baru atau destinasi baru sulit mendapatkan rekomendasi yang relevan karena kurangnya data historis interaksi.
-  
+
 **2. Tujuan**
 * Meningkatkan User Experience : Mengembangkan sistem rekomendasi yang dapat memberikan saran destinasi wisata yang relevan untuk setiap pengguna baik pengguna baru maupun lama.
 * Optimasi Proses Perencanaan : Mengurangi waktu dan effort yang diperlukan wisatawan dalam merencanakan perjalanan wisata.
 
   **Pendekatan Solusi**
-  
+
   Dalam mencapai tujuan yang akan dibuat, berikut beberapa solusi yang dapat digunakan sehingga tujuan dan masalah yang dihadapi dapat dicapai dengan baik.
   * Membangun sistem rekomendai berbasis *Content-Based Filtering*
     : Merekomendasi destinasi wisata berdasarkan kemiripan atribut pengguna, cocok untuk pengguna baru yang belum memiliki riwayat rating.
-  * Membangun sistem rekomendasi untuk
+  * Membangun sistem rekomendasi berbasis *Collaborative Filtering*
     : Merekomendasikan destinasi berdasarkan preferensi pengguna lain yang memiliki kesamaan minat, efektif untuk pengguna yang sudah memiliki riwayat rating.
 
 ## Data Understanding
@@ -61,20 +61,20 @@ Dataset terdiri dari 4 files :
  * Terdapat 2 fitur dengan missing value (Time_minutes dan Unnamed : 11)
  * Tipe data pada file 8 kolom numerik dan 4 kolom kategorikal
  * Terdapat beberapa kolom yang tidak dibutuhkan dalam pembuatan model (Coordinate, Lat,Long,Unamed : 11 dan Unamed : 12)
-     
+
 ### user.csv yang berisi data pengguna dummy untuk membuat fitur rekomendasi berdasarkan pengguna terdiri dari 300 baris, 3 kolom
     1. User_Id : kolom id untuk user(pengguna/pengunjung)
     2. Location : lokasi atau alamat dari user
     3. Age : usia dari user
   * tipe data pad file ini 2 kolom numerik dan 1 kolom kategorikal
-  
+
 ### tourism_rating.csv berisi 3 kolom yaitu pengguna, tempat, dan rating yang diberikan, berfungsi untuk membuat sistem rekomendasi berdasarkan rating terdiri dari 10000 baris dan 3 kolom
     1. User_Id : id dari pengunjung
     2. Place_Id : id tempat wisata yang dikunjungi
     3. Place_Ratings : Rating dari tempat wisata 
   * Semua data bertipe numerik
   * Terdapat 79 data yang duplikat
-    
+
 ### package_tourism.csv berisi rekomendasi tempat terdekat berdasarkan waktu, biaya, dan rating, teridiri dari 100 baris, 7 kolom
     1. Package : id dari paket turis
     2. City : Kota atau daerah tujuan utama dari paket wisata.
@@ -121,18 +121,28 @@ Dataset terdiri dari 4 files :
 ### Content-Based Filtering
 * Membuat matriks similarity dengan menggunakan cosine_similarity yang menunjukkan seberapa mirip tiap objek wisata satu dengan lainnya berdasarkan fitur numerik yang sudah dipilih.
 * membuat fungsi 'get_content_recommendations' untuk memeriksa keberadaan kolom Place_Name dan mengurutkan similarity score dan mengambil top-N rekomendasi.
+### Collaborative-Based Filtering
+* Mmebuat metode 'get_user_based_recommendations' untuk  memberikan rekomendasi wisata berdasarkan kemiripan antar pengguna.Program menghitung user similarity matrix menggunakan cosine similarity dari matriks user-item. Lalu, fungsi get_user_based_recommendations dibuat untuk memberikan rekomendasi bagi pengguna tertentu. Fungsi ini akan mencari pengguna yang mirip.
+* Membuat metode 'get_item_based_recommendations' untuk memberikan rekomendasi tempat wisata berdasarkan kemiripan antar tempat. Proses dimulai dengan menghitung item similarity matrix menggunakan cosine similarity antar kolom (tempat) dalam matriks user-item. Fungsi get_item_based_recommendations kemudian digunakan untuk memprediksi rating tempat yang belum dikunjungi oleh pengguna berdasarkan rating pengguna terhadap tempat lain yang mirip.
 
-| Aspek           | Content-Based Filtering |
-|----------------|--------------------------|
-| **Keunggulan**  | - Tidak butuh banyak data pengguna  <br> - Bisa rekomendasi item baru |
-| **Kelemahan**   | - Tidak bisa memahami selera pengguna secara kolektif              |
+| Aspek           | Content-Based Filtering | Collaborative Filtering |
+|----------------|--------------------------|-------------------------|
+| **Keunggulan**  | - Tidak butuh banyak data pengguna  <br> - Bisa rekomendasi item baru | - Personalisasi lebih baik  <br> - Bisa menemukan item tak serupa |
+| **Kelemahan**   | - Tidak bisa memahami selera pengguna secara kolektif              | - Butuh banyak data pengguna  <br> - Tidak bisa rekomendasi item baru |
+| **Cold-start**  | Tidak bisa handle user baru dengan preferensi tidak diketahui      | Tidak bisa handle item baru tanpa rating|
 
 
 ## Evaluation
 ### Content-Based Filtering
 * Menggunakan metrik Cosine Similarity sebagai metrik utama untuk mengevaluasi seberapa mirip sebuah tempat wisata dengan tempat lainnya berdasarkan fitur-fitur numerik (seperti Rating Normalized, Price Normalized, dll).
 * Metrik Cosine Similarity berhasil menunjukkan kemiripan konten antar tempat wisata, terkusus bagi wisatawan baru yang belum melakukan rating sesuai dengan personalisasi wisatawan.
-  
+
 ![image](https://github.com/user-attachments/assets/fcb08054-3569-45a1-8671-98e9f6ec0ca7)
 
 
+### Collaborative-Based Filtering
+* Menggunakan metrik RMSE (Root Mean Squared Error) untuk Mengukur seberapa besar perbedaan antara rating aktual dengan rating prediksi secara kuadrat, kemudian diakarkan.
+* Menggunakan metrik MAE (Mean Absolute Error) untuk Mengukur rata-rata kesalahan absolut antara nilai aktual dan prediksi.
+* Sesuai dari hasil evalusi, didapat bahwa user 1 memberikan 29 rating pada 29 tempat wisata, rata-rata rating yang diberikan adalah 3.4 sehingga model akan merekomendasikan tempat dengan rating dengan rentang 2-5, sehingga wisatawan dapat menemukan tempat wisata sesuai dengan selera nya baik mellaui kesamaan user maupun Item dengan orang lain.
+  
+![image](https://github.com/user-attachments/assets/1f1fd8e2-4e07-4b0e-b782-5c665711a046)
